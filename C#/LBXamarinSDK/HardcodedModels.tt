@@ -42,6 +42,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Converters;
 using RestSharp.Portable.Deserializers;
+using RestSharp.Portable.HttpClient;
 using System.Diagnostics;
 <#if(!XamarinForms) {#>using System.Net.Sockets;<#}#>
 
@@ -51,7 +52,7 @@ namespace LBXamarinSDK
 	// Gateway: Communication with Server API
 	public class Gateway
     {
-        private static Uri BASE_URL = new Uri("http://10.0.0.1:3000/api/");
+        private static Uri BASE_URL = new Uri("http://127.0.0.1:3000/api/");
 		private static RestClient _client = new RestClient {BaseUrl = BASE_URL};
         private static string _accessToken = null;
 		private static bool _debugMode = false;
@@ -136,7 +137,7 @@ namespace LBXamarinSDK
         }
 		/* *** */
 
-		// Define server Base Url for API requests. Example: "http://10.0.0.1:3000/api/"
+		// Define server Base Url for API requests. Example: "http://127.0.0.1:3000/api/"
         public static void SetServerBaseURL(Uri baseUrl)
         {
             BASE_URL = baseUrl;
@@ -163,7 +164,7 @@ namespace LBXamarinSDK
 			_cts.Token.ThrowIfCancellationRequested();
 			try
 			{
-				var request = new RestRequest ("/", new HttpMethod ("GET"));
+				var request = new RestRequest("/", Method.GET);
 				var response = await _client.Execute<JObject>(request, _cts.Token).ConfigureAwait(false);
 				if (response != null)
 				{
@@ -217,10 +218,10 @@ namespace LBXamarinSDK
 
 
 		// Parses a server request then makes it through MakeRequest
-        public static async Task<T> PerformRequest<T>(string APIUrl, string json, string method = "POST", IDictionary<string, string> queryStrings = null)
+        public static async Task<T> PerformRequest<T>(string APIUrl, string json, Method method = Method.POST, IDictionary<string, string> queryStrings = null)
 		{
 			RestRequest request = null;
-            request = new RestRequest(APIUrl, new HttpMethod(method));
+            request = new RestRequest(APIUrl, method);
 
             if(_debugMode)
                 Debug.WriteLine("-------- >> DEBUG: Performing " + method + " request at URL: '" + _client.BuildUri(request) + "', Json: " + (string.IsNullOrEmpty(json) ? "EMPTY" : json));
@@ -244,7 +245,7 @@ namespace LBXamarinSDK
             }
 
 			// Add body parameters to the request
-			if ((method == "POST" || method == "PUT") && json != "")
+			if ((method == Method.POST || method == Method.PUT) && json != "")
             {
 				request.AddHeader("ContentType", "application/json");
 				request.AddParameter ("application/json", JObject.Parse(json), ParameterType.RequestBody);
@@ -258,21 +259,21 @@ namespace LBXamarinSDK
         // T is the expected return type, U is the input type. E.g. U is Car, T is Car
         public static async Task<T> PerformPostRequest<U, T>(U objToPost, string APIUrl, IDictionary<string, string> queryStrings = null)
         {
-            var res = await PerformRequest<T>(APIUrl, JsonConvert.SerializeObject(objToPost), "POST", queryStrings).ConfigureAwait(false);
+            var res = await PerformRequest<T>(APIUrl, JsonConvert.SerializeObject(objToPost), Method.POST, queryStrings).ConfigureAwait(false);
             return res;
         }
 
         // T is the expected return type. For example "Car" for get or "Car[]" for get all cars
         public static async Task<T> PerformGetRequest<T>(string APIUrl, IDictionary<string, string> queryStrings = null)
         {	
-            var res = await PerformRequest<T>(APIUrl, "", "GET", queryStrings).ConfigureAwait(false);
+            var res = await PerformRequest<T>(APIUrl, "", Method.GET, queryStrings).ConfigureAwait(false);
             return res;
         }
 
         // T is the expected return type, U is the input type. E.g. U is Car, T is Car
         public static async Task<T> PerformPutRequest<U, T>(U objToPut, string APIUrl, IDictionary<string, string> queryStrings = null)
         {
-            var res = await PerformRequest<T>(APIUrl, JsonConvert.SerializeObject(objToPut), "PUT", queryStrings).ConfigureAwait(false);
+            var res = await PerformRequest<T>(APIUrl, JsonConvert.SerializeObject(objToPut), Method.PUT, queryStrings).ConfigureAwait(false);
             return res;
         }
     }

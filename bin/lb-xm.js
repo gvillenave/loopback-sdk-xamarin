@@ -11,7 +11,7 @@ var semver = require('semver');
 var optimist = require('optimist');
 var generator = require('../index.js');
 var edgePath = path.resolve('./');
-var edge = require ('edge');
+var edge = require('edge');
 
 var argv = optimist
   .usage('Generate an SDK for Loopback in C#.' +

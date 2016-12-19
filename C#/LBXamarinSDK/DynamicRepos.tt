@@ -332,7 +332,7 @@ foreach (var model in modelsJSON.First.First)
 				determineReturnStatementAndTemplate(ref returnStatementString, ref templatesString, returnTypeOrig, returnTypeIsArray, returnIsRoot);
 				
 				
-#>				var response = await Gateway.PerformRequest<<#=templatesString#>>(APIPath, bodyJSON, "<#=APIMethod#>", queryStrings).ConfigureAwait(false);
+#>				var response = await Gateway.PerformRequest<<#=templatesString#>>(APIPath, bodyJSON, Method.<#=APIMethod#>, queryStrings).ConfigureAwait(false);
 				<#=returnStatementString#>
 			}
 <#

@@ -12,12 +12,11 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "node-gyp": "^1.0.3",
-    "edge": "^0.10.1",
-    "ejs": "^1.0.0",
-    "express": "3.x",
+    "edge": "^6.5.1",
+    "ejs": "^2.5.3",
+    "express": "^4.14.0",
     "optimist": "^0.6.1",
-    "semver": "^2.2.1"
+    "semver": "^5.3.0"
   },
   "main": "index.js",
   "repository": {
